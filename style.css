@@ -42,7 +42,10 @@ h2 {
 .plaque .amount {
   display: none;
 }
-
+/* Hide the tier headings */
+#donor-wall h2 {
+  display: none !important;
+}
 
 
 
