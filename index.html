@@ -208,15 +208,18 @@
         logo.style.display = 'block';
         logo.style.width = '200px';
         logo.style.height = 'auto';
-        wall.appendChild(logo);
-        }
-      } // ✅ closes render
-    fetchDonors(CSV_FILE)
-      .then(({ donors, logoURL }) => render(donors, logoURL))
-      .catch(e => {
-        document.getElementById('donor-wall').textContent = 'Error loading data.';
-        console.error(e);
-      });
+               wall.appendChild(logo);
+      } // closes if (logoURL)
+    } // closes .forEach over tiers
+  } // ✅ closes render
+
+  fetchDonors(CSV_FILE)
+    .then(({ donors, logoURL }) => render(donors, logoURL))
+    .catch(e => {
+      document.getElementById('donor-wall').textContent = 'Error loading data.';
+      console.error(e);
+    });
+
   </script>
 </body>
 </html>
