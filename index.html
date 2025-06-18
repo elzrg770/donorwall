@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Live Donor Wall</title>
+  <title>Chai Club Members</title>
   <style>
     body {
       margin: 0;
@@ -36,26 +35,66 @@
       height: 60px;
       border-radius: 50%/50%;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       font-weight: 600;
       font-size: 0.95rem;
       box-shadow: 0 0 6px rgba(0,0,0,.4);
-      padding: 4px;
+      background: #111e34;
+      color: #fff;
       text-align: center;
     }
-    .top {
-      background: linear-gradient(#ffd700,#ffc20e);
-      color: #000;
+    .plaque.top    { background: linear-gradient(#ffd700,#ffc20e); color: #000; }
+    .plaque.middle { background: linear-gradient(#f1f1f1,#bfc7d1); color: #000; }
+    .plaque.bottom { background: linear-gradient(#ef8f39,#e6945e); color: #000; }
+
+    /* Hover states */
+    .plaque.top:hover    { background: linear-gradient(#c2a60c,#e2aa05); color: #fff; }
+    .plaque.middle:hover { background: linear-gradient(#979393,#b7bec7); color: #fff; }
+    .plaque.bottom:hover { background: linear-gradient(#e3730e,#c48256); color: #fff; }
+
+    /* Hide this bottom-logo on desktop */
+    img.mobile-logo { display: none; }
+
+    /* Tablet / small desktop */
+    @media (max-width: 980px) {
+      #donor-wall { display: block !important; }
+      .tier-row { padding: 5px 10px !important; }
+      .middle-tier-wrap { display: block !important; }
     }
-    .middle {
-      background: linear-gradient(#f1f1f1,#bfc7d1);
-      color: #000;
-    }
-    .bottom {
-      background: linear-gradient(#ef8f39, #e6945e);
-      color: #000;
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      #donor-wall {
+        gap: 16px;
+        padding: 0 1rem;
+      }
+      /* Hide center logo */
+      .middle-tier-wrap > img { display: none !important; }
+      /* Show bottom logo */
+      img.mobile-logo {
+        display: block;
+        margin: 2rem auto 0;
+        width: 200px;
+        height: auto;
+      }
+      /* Stack plaques */
+      .tier-row {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 1.5rem;
+      }
+      .plaque {
+        width: 42%;
+        max-width: 160px;
+        height: 55px;
+        font-size: 0.9rem;
+      }
+      .middle-tier-wrap {
+        flex-direction: column;
+        align-items: center;
+      }
     }
   </style>
 </head>
@@ -63,141 +102,125 @@
   <h1>Chai Club Members</h1>
   <div id="donor-wall">Loading donors…</div>
 
- <script>
-  const CSV_FILE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSgtQMdzrtymc-gPKeDZET-ynYo_DDCL-icYNJ7EGOWP-TjhRXiAUUhmvjvNN7P7_L9kjC4QbNcTd-f/pub?gid=0&single=true&output=csv";
+  <script>
+    const CSV_FILE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSgtQMdzrtymc-gPKeDZET-ynYo_DDCL-icYNJ7EGOWP-TjhRXiAUUhmvjvNN7P7_L9kjC4QbNcTd-f/pub?gid=0&single=true&output=csv";
 
-  const TIERS = {
-    gold:   { rows: [3,4,5,6,7] },
-    silver: { rows: [4,5,6,5,4] },
-    bronze: { rows: [9,8,7,6,5,4] }
-  };
+    const TIERS = {
+      gold:   { rows: [3,4,5,6,7] },
+      silver: { rows: [4,5,6,5,4] },
+      bronze: { rows: [9,8,7,6,5,4] }
+    };
 
-  async function fetchDonors(url) {
-    const res = await fetch(url);
-    const txt = await res.text();
-    const lines = txt.trim().split("\n");
-    const headers = lines[0].split(",").map(h => h.trim().toLowerCase());
-    const nameIdx = headers.indexOf("name"),
-          tierIdx = headers.indexOf("tier"),
-          logoIdx = headers.indexOf("logo");
-    let logoURL = null, donors = [];
-
-    for (let i = 1; i < lines.length; i++) {
-      const cols = lines[i].split(",");
-      const name = cols[nameIdx]?.trim();
-      const tier = cols[tierIdx]?.trim().toLowerCase();
-      const logo = cols[logoIdx]?.trim();
-      if (logo && !logoURL) logoURL = logo.replace("dl=0","raw=1");
-      if (name && tier) donors.push({ name, tier });
-    }
-    return { donors, logoURL };
-  }
-
-  function distribute(list, key) {
-    const pattern = TIERS[key].rows;
-    const rows = pattern.map(() => []);
-    let i=0;
-    list.forEach(d => {
-      while (i < rows.length && rows[i].length >= pattern[i]) i++;
-      (rows[i]||rows[rows.length-1]).push(d);
-    });
-    return rows;
-  }
-
-  function createPlaque(name, tier) {
-    const map = { gold:"top", silver:"middle", bronze:"bottom" };
-    const p = document.createElement("div");
-    p.className = "plaque " + (map[tier]||"bottom");
-    p.textContent = name;
-    return p;
-  }
-
-  function render(donors, logoURL) {
-    const wall = document.getElementById("donor-wall");
-    wall.innerHTML = "";
-
-    const labels = { gold:"Gold", silver:"Silver", bronze:"Bronze" };
-
-    ["gold","silver","bronze"].forEach(tier => {
-      const group = donors.filter(d => d.tier === tier);
-
-      // Tier heading
-      const h2 = document.createElement("h2");
-      h2.textContent = labels[tier];
-      h2.style.margin = "2rem 0 1rem";
-      wall.appendChild(h2);
-
-      if (tier === "silver") {
-        // Silver: two columns + center logo
-        const wrap = document.createElement("div");
-        wrap.className = "middle-tier-wrap";
-        Object.assign(wrap.style, {
-          display:"flex", justifyContent:"center", alignItems:"flex-start",
-          gap:"30px", flexWrap:"nowrap", margin:"1rem 0"
-        });
-
-        const makeCol = () => {
-          const col = document.createElement("div");
-          col.style.display = "flex";
-          col.style.flexDirection = "column";
-          col.style.gap = "18px";
-          return col;
-        };
-
-        const half = Math.ceil(group.length/2);
-        [group.slice(0,half), group.slice(half)].forEach((sideList, i) => {
-          const col = makeCol();
-          for (let j=0; j<sideList.length; j+=3) {
-            const row = document.createElement("div");
-            row.className = "tier-row";
-            sideList.slice(j,j+3).forEach(d => row.appendChild(createPlaque(d.name, d.tier)));
-            col.appendChild(row);
-          }
-          wrap.appendChild(col);
-        });
-
-        if (logoURL) {
-          const img = document.createElement("img");
-          img.src = logoURL;
-          img.alt = "Logo";
-          img.style.width = "300px";
-          img.style.height = "300px";
-          img.style.flexShrink = "0";
-          wrap.appendChild(img);
-        }
-
-        wall.appendChild(wrap);
-
-      } else {
-        // Gold & Bronze: simple rows
-        const rows = distribute(group, tier);
-        rows.forEach(r => {
-          const rowEl = document.createElement("div");
-          rowEl.className = "tier-row";
-          r.forEach(d => rowEl.appendChild(createPlaque(d.name, d.tier)));
-          wall.appendChild(rowEl);
-        });
+    async function fetchDonors(url) {
+      const res = await fetch(url);
+      const txt = await res.text();
+      const lines = txt.trim().split("\n");
+      const headers = lines[0].split(",").map(h=>h.trim().toLowerCase());
+      const nameIdx = headers.indexOf("name"),
+            tierIdx = headers.indexOf("tier"),
+            logoIdx = headers.indexOf("logo");
+      let logoURL = null, donors = [];
+      for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split(",");
+        const name = cols[nameIdx]?.trim();
+        const tier = cols[tierIdx]?.trim().toLowerCase();
+        const logo = cols[logoIdx]?.trim();
+        if (logo && !logoURL) logoURL = logo.replace("dl=0","raw=1");
+        if (name && tier) donors.push({name,tier});
       }
-    });
-
-    // Mobile‐only bottom logo
-    if (logoURL) {
-      const bottom = document.createElement("img");
-      bottom.src = logoURL;
-      bottom.alt = "Logo";
-      bottom.className = "mobile-logo";
-      wall.appendChild(bottom);
+      return {donors,logoURL};
     }
-  }
 
-  // Kick it off
-  fetchDonors(CSV_FILE)
-    .then(({donors,logoURL}) => render(donors,logoURL))
-    .catch(e => {
-      document.getElementById("donor-wall").textContent = "Error loading data.";
-      console.error(e);
-    });
-</script>
+    function distribute(list, key) {
+      const pat = TIERS[key].rows;
+      const rows = pat.map(()=>[]);
+      let idx = 0;
+      list.forEach(d=> {
+        while (idx<rows.length && rows[idx].length>=pat[idx]) idx++;
+        (rows[idx]||rows[rows.length-1]).push(d);
+      });
+      return rows;
+    }
 
+    function createPlaque(name, tier) {
+      const map = {gold:"top",silver:"middle",bronze:"bottom"};
+      const p = document.createElement("div");
+      p.className = "plaque " + (map[tier]||"bottom");
+      p.textContent = name;
+      return p;
+    }
+
+    function render(donors, logoURL) {
+      const wall = document.getElementById("donor-wall");
+      wall.innerHTML = "";
+      const labels = {gold:"Gold",silver:"Silver",bronze:"Bronze"};
+
+      ["gold","silver","bronze"].forEach(tier=>{
+        const grp = donors.filter(d=>d.tier===tier);
+        // Heading
+        const h2 = document.createElement("h2");
+        h2.textContent = labels[tier];
+        h2.style.margin = "2rem 0 1rem";
+        wall.appendChild(h2);
+
+        if (tier==="silver") {
+          const wrap = document.createElement("div");
+          wrap.className="middle-tier-wrap";
+          Object.assign(wrap.style,{
+            display:"flex",justifyContent:"center",alignItems:"flex-start",
+            gap:"30px",flexWrap:"nowrap",margin:"1rem 0"
+          });
+
+          // two columns
+          const col = ()=>{let c=document.createElement("div");c.style.display="flex";c.style.flexDirection="column";c.style.gap="18px";return c;};
+          const half = Math.ceil(grp.length/2);
+          [grp.slice(0,half),grp.slice(half)].forEach(side=>{
+            const c = col();
+            for (let j=0; j<side.length; j+=3) {
+              const row = document.createElement("div");
+              row.className="tier-row";
+              side.slice(j,j+3).forEach(d=>row.appendChild(createPlaque(d.name,d.tier)));
+              c.appendChild(row);
+            }
+            wrap.appendChild(c);
+          });
+
+          // center logo
+          if (logoURL) {
+            const img = document.createElement("img");
+            img.src = logoURL; img.alt="Logo";
+            img.style.width="300px"; img.style.height="300px"; img.style.flexShrink="0";
+            wrap.appendChild(img);
+          }
+
+          wall.appendChild(wrap);
+
+        } else {
+          const rows = distribute(grp,tier);
+          rows.forEach(r=>{
+            const div = document.createElement("div");
+            div.className="tier-row";
+            r.forEach(d=>div.appendChild(createPlaque(d.name,d.tier)));
+            wall.appendChild(div);
+          });
+        }
+      });
+
+      // bottom logo on mobile only
+      if (logoURL) {
+        const bottom = document.createElement("img");
+        bottom.src = logoURL; bottom.alt="Logo";
+        bottom.className = "mobile-logo";
+        wall.appendChild(bottom);
+      }
+    }
+
+    fetchDonors(CSV_FILE)
+      .then(({donors,logoURL})=>render(donors,logoURL))
+      .catch(e=>{
+        document.getElementById("donor-wall").textContent="Error loading data.";
+        console.error(e);
+      });
+  </script>
 </body>
 </html>
