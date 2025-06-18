@@ -1,170 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Donor Wall – Fan Layout</title>
-  <link rel="stylesheet" href="style.css">
-
+  <link rel="stylesheet" href="style.css" />
   <style>
+    /* Your existing inline CSS */
     body {
       margin:0;
       padding:2rem 1rem;
-      /*font-family:Georgia,serif;*/
       font-family: sans-serif;
       background:#0e1b2c;
       color:#fff;
       text-align:center;
     }
-    h1{margin-bottom:3rem;font-size:2.4rem}
-    #donor-wall{display:flex;flex-direction:column;align-items:center;gap:22px;max-width:1100px;margin:0 auto;}
-    .tier-row{display:flex;justify-content:center;gap:18px;flex-wrap:nowrap;}
-    .plaque{width:120px;height:60px;border-radius:50%/50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:600;font-size:0.95rem;box-shadow:0 0 6px rgba(0,0,0,.4);padding:4px;text-align:center;}
-    .plaque span.amount{font-size:0.75em;font-style:italic;font-weight:400;}
-    .top{background:linear-gradient(#ffd700,#ffc20e);color:#000}
-    .middle{background:linear-gradient(#f1f1f1,#bfc7d1);color:#000}
-    /*.bottom{background:linear-gradient(#c97c37,#8d6449);color:#fff}*/
-    .bottom {
-    background: linear-gradient(#ef8f39, #e6945e);
-    color: #000;
-}
-     /* Hide the Gold/Silver/Bronze headings */
-#donor-wall h2 {
-  display: none !important;
+    h1 {
+      margin-bottom:3rem;
+      font-size:2.4rem;
+    }
+    #donor-wall {
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:22px;
+      max-width:1100px;
+      margin:0 auto;
+    }
+    .tier-row {
+      display:flex;
+      justify-content:center;
+      gap:18px;
+      flex-wrap:nowrap;
+    }
+    .plaque {
+      width:120px;
+      height:60px;
+      border-radius:50%/50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:600;
+      font-size:0.95rem;
+      box-shadow:0 0 6px rgba(0,0,0,.4);
+      padding:4px;
+      text-align:center;
+    }
+    .plaque span.amount {
+      font-size:0.75em;
+      font-style:italic;
+      font-weight:400;
+    }
+    .top    { background:linear-gradient(#ffd700,#ffc20e); color:#000 }
+    .middle { background:linear-gradient(#f1f1f1,#bfc7d1); color:#000 }
+    .bottom { background:linear-gradient(#ef8f39,#e6945e); color:#000 }
+
+    /* Hide amounts & headings if you added these */
+    .plaque .amount { display: none !important; }
+    #donor-wall h2 { display: none !important; }
+
+    /* Hover states */
+    .plaque.top:hover    { background:linear-gradient(#c2a60c,#e2aa05); color:#fff }
+    .plaque.middle:hover { background:linear-gradient(#979393,#b7bec7); color:#fff }
+    .plaque.bottom:hover { background:linear-gradient(#e3730e,#c48256); color:#fff }
   </style>
 </head>
 
-}
 <body>
   <h1>Chai Club Members</h1>
-  <div id="donor-wall">Loading wonderful members…</div>
+  <div id="donor-wall">Loading donors…</div>
 
-<script>
-// const CSV_FILE = "demo_donors.csv";
-const CSV_FILE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSgtQMdzrtymc-gPKeDZET-ynYo_DDCL-icYNJ7EGOWP-TjhRXiAUUhmvjvNN7P7_L9kjC4QbNcTd-f/pub?gid=0&single=true&output=csv";
-// fallback/default logo
-let logoURL = 'club.png';
+  <script>
+    // 1) CSV + default fallback logo
+    const CSV_FILE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSgtQMdzrtymc-gPKeDZET-ynYo_DDCL-icYNJ7EGOWP-TjhRXiAUUhmvjvNN7P7_L9kjC4QbNcTd-f/pub?gid=0&single=true&output=csv";
+    let logoURL = 'club.png';
 
-const TIERS = {
-  top   : {min:5000, rows:[3,4,5,6,7]},
-  middle: {min:1000, rows:[4,5,6,5,4]},
-  bottom: {min:0   , rows:[9,8,7,6,5,4]}
-};
-
-async function fetchDonors(url){
-  const res = await fetch(url);
-  const txt = await res.text();
-  return txt.trim().split('\n').slice(1).map(l=>{
-    const [n,a] = l.split(',');
-    return {name:n.trim(), amount:+a};
-  });
-}
-
-function tierOf(d){
-  return d.amount >= TIERS.top.min ? 'top' :
-         d.amount >= TIERS.middle.min ? 'middle' : 'bottom';
-}
-
-function distribute(list, tierKey){
-  const pattern = TIERS[tierKey].rows;
-  const rows = pattern.map(() => []);
-  let i = 0;
-  list.forEach(d => {
-    while(i < rows.length && rows[i].length >= pattern[i]) i++;
-    (rows[i] || rows[rows.length-1]).push(d);
-  });
-  return rows;
-}
-
-function render(donors) {
-  const wall = document.getElementById('donor-wall');
-  wall.innerHTML = '';
-
-  const ROW_SIZE = 3;
-  const tierLabels = { top: 'Gold', middle: 'Silver', bottom: 'Bronze' };
-
-  ['top','middle','bottom'].forEach(tier => {
-    const group = donors.filter(d => d.tier === tier);
-
-    const heading = document.createElement('h2');
-    heading.textContent = tierLabels[tier];
-    heading.style.textAlign = 'center';
-    heading.style.marginTop = '2rem';
-    wall.appendChild(heading);
-
-    if (tier === 'middle') {
-      const wrap = document.createElement('div');
-      wrap.className = 'middle-tier-wrap';
-      Object.assign(wrap.style, {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        gap: '30px',
-        flexWrap: 'nowrap',
-        margin: '2rem 0'
-      });
-
-      const makeColumn = () => {
-        const col = document.createElement('div');
-        col.style.display = 'flex';
-        col.style.flexDirection = 'column';
-        col.style.gap = '18px';
-        return col;
-      };
-      const leftCol  = makeColumn();
-      const rightCol = makeColumn();
-
-      const half = Math.ceil(group.length / 2);
-      const sides = [group.slice(0, half), group.slice(half)];
-
-      sides.forEach((sideList, idx) => {
-        const col = idx === 0 ? leftCol : rightCol;
-        for (let i = 0; i < sideList.length; i += ROW_SIZE) {
-          const rowEl = document.createElement('div');
-          rowEl.className = 'tier-row';
-          sideList.slice(i, i + ROW_SIZE)
-                   .forEach(d => rowEl.appendChild(createPlaque(d, tier)));
-          col.appendChild(rowEl);
+    // 2) fetch name, amount, tier by thresholds, AND sheet logo
+    async function fetchDonors(url) {
+      const res = await fetch(url);
+      const txt = await res.text();
+      return txt.trim().split('\n').slice(1).map(line => {
+        const cols = line.split(',');
+        const name = cols[0]?.trim();
+        const amount = +cols[1] || 0;
+        const tier = amount >= 5000    ? 'top'
+                   : amount >= 1000    ? 'middle'
+                   : 'bottom';
+        // sheet's logo column is the 4th cell (index 3)
+        const sheetLogo = (cols[3]||'').trim();
+        if (sheetLogo && logoURL === 'club.png') {
+          logoURL = sheetLogo.replace(/dl=0$/, 'raw=1');
         }
-      });
-
-      const img = document.createElement('img');
-      img.src  = img.src = logoURL; // your static logo
-      img.alt  = 'Center Logo';
-      img.style.width  = '300px';
-      img.style.height = '300px';
-      img.style.flexShrink = '0';
-
-      wrap.appendChild(leftCol);
-      wrap.appendChild(img);
-      wrap.appendChild(rightCol);
-      wall.appendChild(wrap);
-
-    } else {
-      const rows = distribute(group, tier);
-      rows.forEach(r => {
-        const rowEl = document.createElement('div');
-        rowEl.className = 'tier-row';
-        r.forEach(d => rowEl.appendChild(createPlaque(d, tier)));
-        wall.appendChild(rowEl);
+        return { name, amount, tier };
       });
     }
-  });
-}
 
-function createPlaque(d, tier){
-  const p = document.createElement('div');
-  p.className = 'plaque ' + tier;
-  p.innerHTML = ${d.name}<span class="amount">${d.amount.toLocaleString()}</span>;
-  return p;
-}
+    // 3) your existing distribute helper
+    const TIERS = {
+      top:    { rows:[3,4,5,6,7] },
+      middle: { rows:[4,5,6,5,4] },
+      bottom: { rows:[9,8,7,6,5,4] }
+    };
+    function distribute(list, key) {
+      const pat = TIERS[key].rows;
+      const rows = pat.map(()=>[]);
+      let idx = 0;
+      list.forEach(d => {
+        while(idx<rows.length && rows[idx].length>=pat[idx]) idx++;
+        (rows[idx]||rows[rows.length-1]).push(d);
+      });
+      return rows;
+    }
 
-fetchDonors(CSV_FILE)
- .then(arr => arr.map(d => ({...d, tier: tierOf(d)})))
- .then(render)
- .catch(e => {
-   document.getElementById('donor-wall').textContent = 'Error loading data.';
-   console.error(e);
- });
-</script>
-</body>
-</html>
+    // 4) your original createPlaque (name + amount span)
+    function createPlaque(d) {
+      const div = document.createElement('div');
+      div.className = 'plaque ' + d.tier;
+      div.innerHTML = `
+        ${d.name}
+        <span class="amount">${d.amount.toLocaleString()}</span>
+      `;
+      return div;
+    }
+
+    // 5) your original render(), swapping in dynamic logoURL
+    function render(donors) {
+      const wall = document.getElementById('donor-wall');
+      wall.innerHTML = '';
+      ['top','middle','bottom'].forEach(tier => {
+        const group = donors.filter(d=>d.tier===tier);
+
+        if (tier === 'middle') {
+          // two columns + center logo
+          const wrap = document.createElement('div');
+          wrap.className = 'midd
