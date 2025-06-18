@@ -39,6 +39,9 @@ h2 {
     background: linear-gradient(#c2a60c, #e2aa05);
     color: #fff;
 }
+.plaque .amount {
+  display: none;
+}
 
 
 
