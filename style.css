@@ -5,61 +5,47 @@ h2 {
   margin-bottom: 1rem;
 }
 
-/* ---------- Responsive Styling ---------- */
-    @media (max-width: 980px) {
-        #donor-wall {
-           display: block !important;
-        }
-        .tier-row{
-        padding:5px 10px !important;
-        }
-        .middle-tier-wrap {
-           display: block !important;
-        }
-     .plaque span.amount{
-         font-size: 16px; 
-     }    
-    }
-    @media (max-width: 768px) {
-      #donor-wall {
-        gap: 16px;
-        padding: 0 1rem;
-      }
-    }
-
-.plaque.bottom:hover {
-    background: linear-gradient(#e3730e, #c48256);
-    color: #fff;
-}
-.plaque.middle:hover {
-    background: linear-gradient(#979393, #b7bec7);
-    color: #fff;
-}
-.plaque.top:hover {
-    background: linear-gradient(#c2a60c, #e2aa05);
-    color: #fff;
-}
-img.mobile-logo {
-  display: none;
+/* Tablet / small desktop */
+@media (max-width: 980px) {
+  #donor-wall {
+    display: block !important;
+  }
+  .tier-row {
+    padding: 5px 10px !important;
+  }
+  .middle-tier-wrap {
+    display: block !important;
+  }
+  .plaque span.amount {
+    font-size: 16px;
+  }
 }
 
+/* Mobile */
 @media (max-width: 768px) {
+  #donor-wall {
+    gap: 16px;
+    padding: 0 1rem;
+  }
+
+  /* Hide the center logo, show the bottom one */
   .middle-tier-wrap > img {
     display: none !important;
   }
-
   img.mobile-logo {
     display: block;
+    margin: 2rem auto 0;
+    width: 200px;
+    height: auto;
   }
-}
-@media (max-width: 768px) {
+
+  /* Stack plaques 2–3 per row */
   .tier-row {
     flex-wrap: wrap;
     justify-content: center;
     gap: 12px;
     margin-bottom: 1.5rem;
   }
-
   .plaque {
     width: 42%;
     max-width: 160px;
@@ -68,14 +54,23 @@ img.mobile-logo {
     flex-shrink: 0;
   }
 
+  /* Ensure columns collapse vertically */
   .middle-tier-wrap {
     flex-direction: column;
     align-items: center;
   }
 }
 
-
-
-
-
-
+/* Hover states */
+.plaque.bottom:hover {
+  background: linear-gradient(#e3730e, #c48256);
+  color: #fff;
+}
+.plaque.middle:hover {
+  background: linear-gradient(#979393, #b7bec7);
+  color: #fff;
+}
+.plaque.top:hover {
+  background: linear-gradient(#c2a60c, #e2aa05);
+  color: #fff;
+}
