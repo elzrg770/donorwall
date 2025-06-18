@@ -60,7 +60,7 @@
   </style>
 </head>
 <body>
-  <h1>Live Donor Wall</h1>
+  <h1>Chai Club Members</h1>
   <div id="donor-wall">Loading donors…</div>
 
   <script>
@@ -110,12 +110,18 @@
       return rows;
     }
 
-    function createPlaque(d, tier){
-      const p = document.createElement('div');
-      p.className = 'plaque ' + tier;
-      p.textContent = d.name;
-      return p;
-    }
+   function createPlaque(d, tier){
+  const tierMap = {
+    gold: 'top',
+    silver: 'middle',
+    bronze: 'bottom'
+  };
+  const p = document.createElement('div');
+  p.className = 'plaque ' + (tierMap[tier] || 'bottom');
+  p.textContent = d.name;
+  return p;
+}
+
 
     function render(donors, logoURL) {
       const wall = document.getElementById('donor-wall');
@@ -130,11 +136,11 @@
       ['gold', 'silver', 'bronze'].forEach(tier => {
         const group = donors.filter(d => d.tier === tier);
 
-        const heading = document.createElement('h2');
-        heading.textContent = tierLabels[tier];
-        heading.style.textAlign = 'center';
-        heading.style.marginTop = '2rem';
-        wall.appendChild(heading);
+       // const heading = document.createElement('h2');
+       // heading.textContent = tierLabels[tier];
+       // heading.style.textAlign = 'center';
+       // heading.style.marginTop = '2rem';
+       // wall.appendChild(heading);
 
         if (tier === 'silver') {
           const wrap = document.createElement('div');
