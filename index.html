@@ -210,7 +210,6 @@
         logo.style.height = 'auto';
         wall.appendChild(logo);
       } // ✅ closes render()
-
     fetchDonors(CSV_FILE)
       .then(({ donors, logoURL }) => render(donors, logoURL))
       .catch(e => {
