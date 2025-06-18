@@ -198,7 +198,7 @@
             wall.appendChild(rowEl);
           });
         }
-           // Render logo at the bottom (mobile only)
+            // Render logo at the bottom (mobile only)
       if (logoURL) {
         const logo = document.createElement('img');
         logo.src = logoURL;
@@ -208,11 +208,14 @@
         logo.style.display = 'block';
         logo.style.width = '200px';
         logo.style.height = 'auto';
-               wall.appendChild(logo);
-      } // closes if (logoURL)
-    } // closes .forEach over tiers
-  } // ✅ closes render
+        wall.appendChild(logo);
+      } // 1) closes if (logoURL)
 
+    }); // 2) closes the ['gold','silver','bronze'].forEach loop
+
+  } // 3) closes render()
+
+  // Now outside render(), start your data fetch:
   fetchDonors(CSV_FILE)
     .then(({ donors, logoURL }) => render(donors, logoURL))
     .catch(e => {
