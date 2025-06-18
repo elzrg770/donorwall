@@ -132,4 +132,53 @@
         if (tier === 'middle') {
           // two columns + center logo
           const wrap = document.createElement('div');
-          wrap.className = 'midd
+          wrap.className = 'middle-tier-wrap';
+
+          const left = document.createElement('div');
+          const right= document.createElement('div');
+          [left,right].forEach(c=>{
+            c.style.display='flex';
+            c.style.flexDirection='column';
+            c.style.gap='18px';
+          });
+
+          const half = Math.ceil(group.length/2);
+          group.slice(0,half).forEach(d=>left.appendChild(createPlaque(d)));
+          group.slice(half).forEach(d=>right.appendChild(createPlaque(d)));
+
+          wrap.appendChild(left);
+          // ← dynamic center logo:
+          const img = document.createElement('img');
+          img.src = logoURL;
+          img.alt= 'Center Logo';
+          img.style.width='300px';
+          img.style.height='300px';
+          img.style.flexShrink='0';
+          wrap.appendChild(img);
+          wrap.appendChild(right);
+
+          wall.appendChild(wrap);
+
+        } else {
+          // Gold & Bronze: simple rows
+          const rows = distribute(group, tier);
+          rows.forEach(r=>{
+            const rowEl = document.createElement('div');
+            rowEl.className = 'tier-row';
+            r.forEach(d=>rowEl.appendChild(createPlaque(d)));
+            wall.appendChild(rowEl);
+          });
+        }
+      });
+    }
+
+    // 6) Finally, run it:
+    fetchDonors(CSV_FILE)
+      .then(render)
+      .catch(e=>{
+        console.error(e);
+        document.getElementById('donor-wall').textContent = 'Error loading data.';
+      });
+  </script>
+</body>
+</html>
