@@ -39,6 +39,40 @@ h2 {
     background: linear-gradient(#c2a60c, #e2aa05);
     color: #fff;
 }
+img.mobile-logo {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .middle-tier-wrap > img {
+    display: none !important;
+  }
+
+  img.mobile-logo {
+    display: block;
+  }
+}
+@media (max-width: 768px) {
+  .tier-row {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+
+  .plaque {
+    width: 42%;
+    max-width: 160px;
+    height: 55px;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .middle-tier-wrap {
+    flex-direction: column;
+    align-items: center;
+  }
+}
 
 
 
