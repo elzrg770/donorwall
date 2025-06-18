@@ -63,166 +63,141 @@
   <h1>Chai Club Members</h1>
   <div id="donor-wall">Loading donors…</div>
 
-  <script>
-    const CSV_FILE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSgtQMdzrtymc-gPKeDZET-ynYo_DDCL-icYNJ7EGOWP-TjhRXiAUUhmvjvNN7P7_L9kjC4QbNcTd-f/pub?gid=0&single=true&output=csv";
+ <script>
+  const CSV_FILE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSgtQMdzrtymc-gPKeDZET-ynYo_DDCL-icYNJ7EGOWP-TjhRXiAUUhmvjvNN7P7_L9kjC4QbNcTd-f/pub?gid=0&single=true&output=csv";
 
-    const TIERS = {
-      gold:   { rows:[3,4,5,6,7] },
-      silver: { rows:[4,5,6,5,4] },
-      bronze: { rows:[9,8,7,6,5,4] }
-    };
-
-    async function fetchDonors(url){
-      const res = await fetch(url);
-      const txt = await res.text();
-      const lines = txt.trim().split('\n');
-      const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-
-      const nameIndex = headers.indexOf('name');
-      const tierIndex = headers.indexOf('tier');
-      const logoIndex = headers.indexOf('logo');
-
-      let logoURL = null;
-      const donors = [];
-
-      for (let i = 1; i < lines.length; i++) {
-        const cols = lines[i].split(',');
-        const name = cols[nameIndex]?.trim();
-        const tier = cols[tierIndex]?.trim().toLowerCase();
-        const logo = cols[logoIndex]?.trim();
-
-        if (logo && !logoURL) logoURL = logo.replace("dl=0", "raw=1");
-
-        if (name && tier) donors.push({ name, tier });
-      }
-
-      return { donors, logoURL };
-    }
-
-    function distribute(list, tierKey){
-      const pattern = TIERS[tierKey].rows;
-      const rows = pattern.map(() => []);
-      let i = 0;
-      list.forEach(d => {
-        while(i < rows.length && rows[i].length >= pattern[i]) i++;
-        (rows[i] || rows[rows.length-1]).push(d);
-      });
-      return rows;
-    }
-
-   function createPlaque(d, tier){
-  const tierMap = {
-    gold: 'top',
-    silver: 'middle',
-    bronze: 'bottom'
+  const TIERS = {
+    gold:   { rows: [3,4,5,6,7] },
+    silver: { rows: [4,5,6,5,4] },
+    bronze: { rows: [9,8,7,6,5,4] }
   };
-  const p = document.createElement('div');
-  p.className = 'plaque ' + (tierMap[tier] || 'bottom');
-  p.textContent = d.name;
-  return p;
-}
 
+  async function fetchDonors(url) {
+    const res = await fetch(url);
+    const txt = await res.text();
+    const lines = txt.trim().split("\n");
+    const headers = lines[0].split(",").map(h => h.trim().toLowerCase());
+    const nameIdx = headers.indexOf("name"),
+          tierIdx = headers.indexOf("tier"),
+          logoIdx = headers.indexOf("logo");
+    let logoURL = null, donors = [];
 
-    function render(donors, logoURL) {
-      const wall = document.getElementById('donor-wall');
-      wall.innerHTML = '';
+    for (let i = 1; i < lines.length; i++) {
+      const cols = lines[i].split(",");
+      const name = cols[nameIdx]?.trim();
+      const tier = cols[tierIdx]?.trim().toLowerCase();
+      const logo = cols[logoIdx]?.trim();
+      if (logo && !logoURL) logoURL = logo.replace("dl=0","raw=1");
+      if (name && tier) donors.push({ name, tier });
+    }
+    return { donors, logoURL };
+  }
 
-      const tierLabels = {
-        gold: 'Gold',
-        silver: 'Silver',
-        bronze: 'Bronze'
-      };
+  function distribute(list, key) {
+    const pattern = TIERS[key].rows;
+    const rows = pattern.map(() => []);
+    let i=0;
+    list.forEach(d => {
+      while (i < rows.length && rows[i].length >= pattern[i]) i++;
+      (rows[i]||rows[rows.length-1]).push(d);
+    });
+    return rows;
+  }
 
-      ['gold', 'silver', 'bronze'].forEach(tier => {
-        const group = donors.filter(d => d.tier === tier);
+  function createPlaque(name, tier) {
+    const map = { gold:"top", silver:"middle", bronze:"bottom" };
+    const p = document.createElement("div");
+    p.className = "plaque " + (map[tier]||"bottom");
+    p.textContent = name;
+    return p;
+  }
 
-       // const heading = document.createElement('h2');
-       // heading.textContent = tierLabels[tier];
-       // heading.style.textAlign = 'center';
-       // heading.style.marginTop = '2rem';
-       // wall.appendChild(heading);
+  function render(donors, logoURL) {
+    const wall = document.getElementById("donor-wall");
+    wall.innerHTML = "";
 
-        if (tier === 'silver') {
-          const wrap = document.createElement('div');
-          wrap.className = 'middle-tier-wrap';
-          Object.assign(wrap.style, {
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'flex-start',
-            gap: '30px',
-            flexWrap: 'nowrap',
-            margin: '2rem 0'
-          });
+    const labels = { gold:"Gold", silver:"Silver", bronze:"Bronze" };
 
-          const makeColumn = () => {
-            const col = document.createElement('div');
-            col.style.display = 'flex';
-            col.style.flexDirection = 'column';
-            col.style.gap = '18px';
-            return col;
-          };
-          const leftCol = makeColumn();
-          const rightCol = makeColumn();
+    ["gold","silver","bronze"].forEach(tier => {
+      const group = donors.filter(d => d.tier === tier);
 
-          const half = Math.ceil(group.length / 2);
-          const sides = [group.slice(0, half), group.slice(half)];
+      // Tier heading
+      const h2 = document.createElement("h2");
+      h2.textContent = labels[tier];
+      h2.style.margin = "2rem 0 1rem";
+      wall.appendChild(h2);
 
-          sides.forEach((sideList, idx) => {
-            const col = idx === 0 ? leftCol : rightCol;
-            for (let i = 0; i < sideList.length; i += 3) {
-              const rowEl = document.createElement('div');
-              rowEl.className = 'tier-row';
-              sideList.slice(i, i + 3)
-                      .forEach(d => rowEl.appendChild(createPlaque(d, tier)));
-              col.appendChild(rowEl);
-            }
-          });
+      if (tier === "silver") {
+        // Silver: two columns + center logo
+        const wrap = document.createElement("div");
+        wrap.className = "middle-tier-wrap";
+        Object.assign(wrap.style, {
+          display:"flex", justifyContent:"center", alignItems:"flex-start",
+          gap:"30px", flexWrap:"nowrap", margin:"1rem 0"
+        });
 
-          const img = document.createElement('img');
-          img.src  = logoURL || 'club.png';
-          img.alt  = 'Center Logo';
-          img.style.width  = '300px';
-          img.style.height = '300px';
-          img.style.flexShrink = '0';
+        const makeCol = () => {
+          const col = document.createElement("div");
+          col.style.display = "flex";
+          col.style.flexDirection = "column";
+          col.style.gap = "18px";
+          return col;
+        };
 
-          wrap.appendChild(leftCol);
+        const half = Math.ceil(group.length/2);
+        [group.slice(0,half), group.slice(half)].forEach((sideList, i) => {
+          const col = makeCol();
+          for (let j=0; j<sideList.length; j+=3) {
+            const row = document.createElement("div");
+            row.className = "tier-row";
+            sideList.slice(j,j+3).forEach(d => row.appendChild(createPlaque(d.name, d.tier)));
+            col.appendChild(row);
+          }
+          wrap.appendChild(col);
+        });
+
+        if (logoURL) {
+          const img = document.createElement("img");
+          img.src = logoURL;
+          img.alt = "Logo";
+          img.style.width = "300px";
+          img.style.height = "300px";
+          img.style.flexShrink = "0";
           wrap.appendChild(img);
-          wrap.appendChild(rightCol);
-          wall.appendChild(wrap);
-        } else {
-          const rows = distribute(group, tier);
-          rows.forEach(r => {
-            const rowEl = document.createElement('div');
-            rowEl.className = 'tier-row';
-            r.forEach(d => rowEl.appendChild(createPlaque(d, tier)));
-            wall.appendChild(rowEl);
-          });
         }
-            // Render logo at the bottom (mobile only)
-      if (logoURL) {
-        const logo = document.createElement('img');
-        logo.src = logoURL;
-        logo.alt = 'Logo';
-        logo.className = 'mobile-logo';
-        logo.style.margin = '2rem auto 0 auto';
-        logo.style.display = 'block';
-        logo.style.width = '200px';
-        logo.style.height = 'auto';
-        wall.appendChild(logo);
-      } // 1) closes if (logoURL)
 
-    }); // 2) closes the ['gold','silver','bronze'].forEach loop
+        wall.appendChild(wrap);
 
-  } // 3) closes render()
-
-  // Now outside render(), start your data fetch:
-  fetchDonors(CSV_FILE)
-    .then(({ donors, logoURL }) => render(donors, logoURL))
-    .catch(e => {
-      document.getElementById('donor-wall').textContent = 'Error loading data.';
-      console.error(e);
+      } else {
+        // Gold & Bronze: simple rows
+        const rows = distribute(group, tier);
+        rows.forEach(r => {
+          const rowEl = document.createElement("div");
+          rowEl.className = "tier-row";
+          r.forEach(d => rowEl.appendChild(createPlaque(d.name, d.tier)));
+          wall.appendChild(rowEl);
+        });
+      }
     });
 
-  </script>
+    // Mobile‐only bottom logo
+    if (logoURL) {
+      const bottom = document.createElement("img");
+      bottom.src = logoURL;
+      bottom.alt = "Logo";
+      bottom.className = "mobile-logo";
+      wall.appendChild(bottom);
+    }
+  }
+
+  // Kick it off
+  fetchDonors(CSV_FILE)
+    .then(({donors,logoURL}) => render(donors,logoURL))
+    .catch(e => {
+      document.getElementById("donor-wall").textContent = "Error loading data.";
+      console.error(e);
+    });
+</script>
+
 </body>
 </html>
