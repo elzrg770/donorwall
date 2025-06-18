@@ -102,125 +102,28 @@
   <h1>Chai Club Members</h1>
   <div id="donor-wall">Loading donors…</div>
 
-  <script>
-    const CSV_FILE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSgtQMdzrtymc-gPKeDZET-ynYo_DDCL-icYNJ7EGOWP-TjhRXiAUUhmvjvNN7P7_L9kjC4QbNcTd-f/pub?gid=0&single=true&output=csv";
-
-    const TIERS = {
-      gold:   { rows: [3,4,5,6,7] },
-      silver: { rows: [4,5,6,5,4] },
-      bronze: { rows: [9,8,7,6,5,4] }
-    };
-
-    async function fetchDonors(url) {
-      const res = await fetch(url);
+ <script>
+  (async function(){
+    try {
+      const res = await fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vSgtQMdzrtymc-gPKeDZET-ynYo_DDCL-icYNJ7EGOWP-TjhRXiAUUhmvjvNN7P7_L9kjC4QbNcTd-f/pub?gid=0&single=true&output=csv");
       const txt = await res.text();
-      const lines = txt.trim().split("\n");
-      const headers = lines[0].split(",").map(h=>h.trim().toLowerCase());
-      const nameIdx = headers.indexOf("name"),
-            tierIdx = headers.indexOf("tier"),
-            logoIdx = headers.indexOf("logo");
-      let logoURL = null, donors = [];
-      for (let i = 1; i < lines.length; i++) {
-        const cols = lines[i].split(",");
-        const name = cols[nameIdx]?.trim();
-        const tier = cols[tierIdx]?.trim().toLowerCase();
-        const logo = cols[logoIdx]?.trim();
-        if (logo && !logoURL) logoURL = logo.replace("dl=0","raw=1");
-        if (name && tier) donors.push({name,tier});
-      }
-      return {donors,logoURL};
-    }
-
-    function distribute(list, key) {
-      const pat = TIERS[key].rows;
-      const rows = pat.map(()=>[]);
-      let idx = 0;
-      list.forEach(d=> {
-        while (idx<rows.length && rows[idx].length>=pat[idx]) idx++;
-        (rows[idx]||rows[rows.length-1]).push(d);
-      });
-      return rows;
-    }
-
-    function createPlaque(name, tier) {
-      const map = {gold:"top",silver:"middle",bronze:"bottom"};
-      const p = document.createElement("div");
-      p.className = "plaque " + (map[tier]||"bottom");
-      p.textContent = name;
-      return p;
-    }
-
-    function render(donors, logoURL) {
+      console.log("CSV RAW:", txt);
+      const lines = txt.trim().split("\n").slice(1);
       const wall = document.getElementById("donor-wall");
-      wall.innerHTML = "";
-      const labels = {gold:"Gold",silver:"Silver",bronze:"Bronze"};
-
-      ["gold","silver","bronze"].forEach(tier=>{
-        const grp = donors.filter(d=>d.tier===tier);
-        // Heading
-        const h2 = document.createElement("h2");
-        h2.textContent = labels[tier];
-        h2.style.margin = "2rem 0 1rem";
-        wall.appendChild(h2);
-
-        if (tier==="silver") {
-          const wrap = document.createElement("div");
-          wrap.className="middle-tier-wrap";
-          Object.assign(wrap.style,{
-            display:"flex",justifyContent:"center",alignItems:"flex-start",
-            gap:"30px",flexWrap:"nowrap",margin:"1rem 0"
-          });
-
-          // two columns
-          const col = ()=>{let c=document.createElement("div");c.style.display="flex";c.style.flexDirection="column";c.style.gap="18px";return c;};
-          const half = Math.ceil(grp.length/2);
-          [grp.slice(0,half),grp.slice(half)].forEach(side=>{
-            const c = col();
-            for (let j=0; j<side.length; j+=3) {
-              const row = document.createElement("div");
-              row.className="tier-row";
-              side.slice(j,j+3).forEach(d=>row.appendChild(createPlaque(d.name,d.tier)));
-              c.appendChild(row);
-            }
-            wrap.appendChild(c);
-          });
-
-          // center logo
-          if (logoURL) {
-            const img = document.createElement("img");
-            img.src = logoURL; img.alt="Logo";
-            img.style.width="300px"; img.style.height="300px"; img.style.flexShrink="0";
-            wrap.appendChild(img);
-          }
-
-          wall.appendChild(wrap);
-
-        } else {
-          const rows = distribute(grp,tier);
-          rows.forEach(r=>{
-            const div = document.createElement("div");
-            div.className="tier-row";
-            r.forEach(d=>div.appendChild(createPlaque(d.name,d.tier)));
-            wall.appendChild(div);
-          });
-        }
+      wall.innerHTML = ""; 
+      lines.forEach(line => {
+        const [name] = line.split(",");
+        const p = document.createElement("p");
+        p.textContent = name;
+        p.style.color = "#fff";
+        wall.appendChild(p);
       });
-  // bottom logo on mobile only
-      if (logoURL) {
-        const bottom = document.createElement("img");
-        bottom.src = logoURL; bottom.alt="Logo";
-        bottom.className = "mobile-logo";
-        wall.appendChild(bottom);
-      }
+    } catch (e) {
+      console.error("Fetch/parse error:", e);
+      document.getElementById("donor-wall").textContent = "Error loading data.";
     }
+  })();
+</script>
 
-    fetchDonors(CSV_FILE)
-      .then(({donors,logoURL})=>render(donors,logoURL))
-      .catch(e=>{
-        document.getElementById("donor-wall").textContent="Error loading data.";
-        console.error(e);
-      });
-    
-  </script>
 </body>
 </html>
