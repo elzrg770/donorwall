@@ -1,80 +1,20 @@
-h2 {
-  font-size: 2rem;
+/* ---------------------------------------
+   Base Styles
+--------------------------------------- */
+body {
+  margin: 0;
+  padding: 2rem 1rem;
+  font-family: sans-serif;
+  background: #0e1b2c;
   color: #fff;
-  text-transform: uppercase;
-  margin-bottom: 1rem;
+  text-align: center;
 }
 
-/* Tablet / small desktop */
-@media (max-width: 980px) {
-  #donor-wall {
-    display: block !important;
-  }
-  .tier-row {
-    padding: 5px 10px !important;
-  }
-  .middle-tier-wrap {
-    display: block !important;
-  }
-  .plaque span.amount {
-    font-size: 16px;
-  }
+h1 {
+  margin-bottom: 3rem;
+  font-size: 2.4rem;
 }
 
-/* Mobile */
-@media (max-width: 768px) {
-  #donor-wall {
-    gap: 16px;
-    padding: 0 1rem;
-  }
-
-  /* Hide the center logo, show the bottom one */
-  .middle-tier-wrap > img {
-    display: none !important;
-  }
-  img.mobile-logo {
-    display: block;
-    margin: 2rem auto 0;
-    width: 200px;
-    height: auto;
-  }
-
-  /* Stack plaques 2–3 per row */
-  .tier-row {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 1.5rem;
-  }
-  .plaque {
-    width: 42%;
-    max-width: 160px;
-    height: 55px;
-    font-size: 0.9rem;
-    flex-shrink: 0;
-  }
-
-  /* Ensure columns collapse vertically */
-  .middle-tier-wrap {
-    flex-direction: column;
-    align-items: center;
-  }
-}
-
-/* Hover states */
-.plaque.bottom:hover {
-  background: linear-gradient(#e3730e, #c48256);
-  color: #fff;
-}
-.plaque.middle:hover {
-  background: linear-gradient(#979393, #b7bec7);
-  color: #fff;
-}
-.plaque.top:hover {
-  background: linear-gradient(#c2a60c, #e2aa05);
-  color: #fff;
-}
-/* ---- Tighten Tier Headings ---- */
 h2 {
   font-size: 2rem;
   color: #fff;
@@ -82,37 +22,90 @@ h2 {
   margin: 2rem 0 1rem; /* 2rem above, 1rem below */
 }
 
-/* ---- Tablet / small desktop (≤980px) ---- */
+#donor-wall {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.tier-row {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  flex-wrap: nowrap; /* desktop: no wrap */
+}
+
+.plaque {
+  width: 120px;
+  height: 60px;
+  border-radius: 50%/50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-shadow: 0 0 6px rgba(0,0,0,.4);
+  background: #111e34;
+  color: #fff;
+  text-align: center;
+  padding: 4px;
+}
+
+/* Tier colors */
+.plaque.top    { background: linear-gradient(#ffd700,#ffc20e); color: #000; }
+.plaque.middle { background: linear-gradient(#f1f1f1,#bfc7d1); color: #000; }
+.plaque.bottom { background: linear-gradient(#ef8f39,#e6945e); color: #000; }
+
+/* Hover states */
+.plaque.top:hover    { background: linear-gradient(#c2a60c,#e2aa05); color: #fff; }
+.plaque.middle:hover { background: linear-gradient(#979393,#b7bec7); color: #fff; }
+.plaque.bottom:hover { background: linear-gradient(#e3730e,#c48256); color: #fff; }
+
+/* Bottom logo placeholder (hidden on desktop) */
+img.mobile-logo {
+  display: none;
+}
+
+/* ---------------------------------------
+   Tablet / Small Desktop (≤980px)
+--------------------------------------- */
 @media (max-width: 980px) {
   #donor-wall {
-    display: block;
+    display: block; /* allow some wrapping if needed */
   }
   .tier-row {
     padding: 5px 10px !important;
   }
+  /* keep flex layout for Silver tier on tablets */
 }
 
-/* ---- Mobile (≤768px) ---- */
+/* ---------------------------------------
+   Mobile (≤768px)
+--------------------------------------- */
 @media (max-width: 768px) {
+  /* container spacing */
   #donor-wall {
     gap: 16px;
     padding: 0 1rem;
   }
 
-  /* Hide center logo */
+  /* hide the center logo (in the Silver tier) */
   .middle-tier-wrap > img {
     display: none !important;
   }
 
-  /* Show the mobile-only bottom logo */
+  /* show the bottom logo instead */
   img.mobile-logo {
     display: block;
-    margin: 1rem auto 0;  /* less top space */
+    margin: 1rem auto 0; /* smaller top margin */
     width: 200px;
     height: auto;
   }
 
-  /* Stack plaques in 2-per-row */
+  /* stack plaques in two-per-row */
   .tier-row {
     flex-wrap: wrap;
     justify-content: center;
@@ -126,9 +119,11 @@ h2 {
     font-size: 0.9rem;
   }
 
-  /* Collapse the two-column silver tier */
+  /* collapse Silver tier columns into one vertical stack */
   .middle-tier-wrap {
+    display: flex !important;
     flex-direction: column;
     align-items: center;
+    gap: 1rem;
   }
 }
