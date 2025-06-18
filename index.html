@@ -4,159 +4,232 @@
   <meta charset="UTF-8">
   <title>Chai Club Members</title>
   <style>
-  /* ---------------------------------------
-   Base Styles
---------------------------------------- */
-body {
-  margin: 0;
-  padding: 2rem 1rem;
-  font-family: sans-serif;
-  background: #0e1b2c;
-  color: #fff;
-  text-align: center;
-}
-h1 {
-  margin-bottom: 3rem;
-  font-size: 2.4rem;
-}
-h2 {
-  font-size: 2rem;
-  color: #fff;
-  text-transform: uppercase;
-  margin: 2rem 0 1rem;
-}
+    /* Base */
+    body {
+      margin: 0;
+      padding: 2rem 1rem;
+      font-family: sans-serif;
+      background: #0e1b2c;
+      color: #fff;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.4rem;
+      margin-bottom: 3rem;
+    }
+    h2 {
+      font-size: 2rem;
+      margin: 2rem 0 1rem;
+      text-transform: uppercase;
+      color: #fff;
+    }
+    #donor-wall {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 22px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
 
-#donor-wall {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 22px;
-  max-width: 1100px;
-  margin: 0 auto;
-}
+    /* Plaques */
+    .tier-row {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: nowrap;
+    }
+    .plaque {
+      width: 120px;
+      height: 60px;
+      border-radius: 50%/50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.95rem;
+      box-shadow: 0 0 6px rgba(0,0,0,0.4);
+      background: #111e34;
+      color: #fff;
+      text-align: center;
+      padding: 4px;
+    }
+    .plaque.top    { background: linear-gradient(#ffd700,#ffc20e); color: #000; }
+    .plaque.middle { background: linear-gradient(#f1f1f1,#bfc7d1); color: #000; }
+    .plaque.bottom { background: linear-gradient(#ef8f39,#e6945e); color: #000; }
+    .plaque.top:hover    { background: linear-gradient(#c2a60c,#e2aa05); color: #fff; }
+    .plaque.middle:hover { background: linear-gradient(#979393,#b7bec7); color: #fff; }
+    .plaque.bottom:hover { background: linear-gradient(#e3730e,#c48256); color: #fff; }
 
-.middle-tier-wrap {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 30px;
-  flex-wrap: nowrap;
-  margin: 2rem 0;
-}
+    /* Silver Tier Wrapper (desktop) */
+    .middle-tier-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 30px;
+      flex-wrap: nowrap;
+      margin: 2rem 0;
+    }
 
-.tier-row {
-  display: flex;
-  justify-content: center;
-  gap: 18px;
-  flex-wrap: nowrap;
-}
+    /* Bottom logo placeholder (hidden unless on mobile) */
+    img.mobile-logo {
+      display: none;
+    }
 
-.plaque {
-  width: 120px;
-  height: 60px;
-  border-radius: 50%/50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 0.95rem;
-  box-shadow: 0 0 6px rgba(0,0,0,.4);
-  background: #111e34;
-  color: #fff;
-  text-align: center;
-  padding: 4px;
-}
+    /* Tablet / small desktop (≤980px) */
+    @media (max-width: 980px) {
+      #donor-wall {
+        display: block;  /* allow wrapping */
+      }
+      .tier-row {
+        padding: 5px 10px !important;
+      }
+    }
 
-.plaque.top    { background: linear-gradient(#ffd700,#ffc20e); color: #000; }
-.plaque.middle { background: linear-gradient(#f1f1f1,#bfc7d1); color: #000; }
-.plaque.bottom { background: linear-gradient(#ef8f39,#e6945e); color: #000; }
-
-.plaque.top:hover    { background: linear-gradient(#c2a60c,#e2aa05); color: #fff; }
-.plaque.middle:hover { background: linear-gradient(#979393,#b7bec7); color: #fff; }
-.plaque.bottom:hover { background: linear-gradient(#e3730e,#c48256); color: #fff; }
-
-img.mobile-logo {
-  display: none;
-}
-
-/* Tablet / small desktop (≤980px) */
-@media (max-width: 980px) {
-  #donor-wall { display: block; }
-  .tier-row { padding: 5px 10px !important; }
-}
-
-/* Mobile (≤768px) */
-@media (max-width: 768px) {
-  #donor-wall {
-    gap: 16px;
-    padding: 0 1rem;
-  }
-  .middle-tier-wrap > img {
-    display: none !important;
-  }
-  img.mobile-logo {
-    display: block;
-    margin: 1rem auto 0;
-    width: 200px;
-    height: auto;
-  }
-  .tier-row {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 1rem;
-  }
-  .plaque {
-    width: 42%;
-    max-width: 160px;
-    height: 55px;
-    font-size: 0.9rem;
-  }
-  .middle-tier-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-  }
-}
-
+    /* Mobile (≤768px) */
+    @media (max-width: 768px) {
+      #donor-wall {
+        gap: 16px;
+        padding: 0 1rem;
+      }
+      .middle-tier-wrap > img {
+        display: none !important; /* hide center logo */
+      }
+      img.mobile-logo {
+        display: block;
+        margin: 1rem auto 0;
+        width: 200px;
+        height: auto;
+      }
+      .tier-row {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 1rem;
+      }
+      .plaque {
+        width: 42%;
+        max-width: 160px;
+        height: 55px;
+        font-size: 0.9rem;
+      }
+      .middle-tier-wrap {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
   </style>
 </head>
 <body>
   <h1>Chai Club Members</h1>
   <div id="donor-wall">Loading donors…</div>
 
-<script>
-  (async function(){
-    // 1) fetch raw CSV
-    const res = await fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vSgtQMdzrtymc-gPKeDZET-ynYo_DDCL-icYNJ7EGOWP-TjhRXiAUUhmvjvNN7P7_L9kjC4QbNcTd-f/pub?gid=0&single=true&output=csv");
-    const txt = await res.text();
-    const lines = txt.trim().split("\n").slice(1);
+  <script>
+    (async function(){
+      const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSgtQMdzrtymc-gPKeDZET-ynYo_DDCL-icYNJ7EGOWP-TjhRXiAUUhmvjvNN7P7_L9kjC4QbNcTd-f/pub?gid=0&single=true&output=csv";
+      const TPL = {
+        gold:   {rows:[3,4,5,6,7]},
+        silver: {rows:[4,5,6,5,4]},
+        bronze: {rows:[9,8,7,6,5,4]}
+      };
 
-    // 2) clear the wall
-    const wall = document.getElementById("donor-wall");
-    wall.innerHTML = "";
+      // fetch & parse CSV
+      const raw = await fetch(CSV_URL).then(r=>r.text());
+      const [hdr,...lines] = raw.trim().split("\n");
+      const heads = hdr.split(",").map(x=>x.trim().toLowerCase());
+      const nameIdx = heads.indexOf("name");
+      const tierIdx = heads.indexOf("tier");
+      const logoIdx = heads.indexOf("logo");
+      let logoURL = null;
+      const donors = lines.map(l=>{
+        const cols = l.split(",");
+        if(!logoURL && cols[logoIdx]) {
+          logoURL = cols[logoIdx].replace("dl=0","raw=1");
+        }
+        return {
+          name: cols[nameIdx]?.trim(),
+          tier: cols[tierIdx]?.trim().toLowerCase()
+        };
+      }).filter(d=>d.name && d.tier);
 
-    // 3) for each line, grab name & tier, then create a plaque
-    lines.forEach(line => {
-      const cols = line.split(",");
-      const name = cols[0]?.trim();
-      const tier = cols[2]?.trim().toLowerCase(); // assuming CSV: name,amount,tier,...
-      if (!name || !tier) return;
+      const wall = document.getElementById("donor-wall");
+      wall.innerHTML = "";
 
-      const div = document.createElement("div");
-      // map tier → class
-      const cls = tier === "gold" 
-                ? "plaque top" 
-                : tier === "silver" 
-                  ? "plaque middle" 
-                  : "plaque bottom";
-      div.className = cls;
-      div.textContent = name;
-      wall.appendChild(div);
-    });
-  })();
-</script>
+      // helper to split into rows
+      function distribute(list, key) {
+        const pat = TPL[key].rows;
+        const rows = pat.map(()=>[]);
+        let i=0;
+        list.forEach(d=>{
+          while(i<rows.length && rows[i].length>=pat[i]) i++;
+          (rows[i]||rows[rows.length-1]).push(d);
+        });
+        return rows;
+      }
 
+      function makePlaque(d){
+        const map = {gold:"top",silver:"middle",bronze:"bottom"};
+        const div = document.createElement("div");
+        div.className = "plaque " + (map[d.tier]||"bottom");
+        div.textContent = d.name;
+        return div;
+      }
+
+      // render each tier
+      ["gold","silver","bronze"].forEach(tier=>{
+        // heading
+        const h2 = document.createElement("h2");
+        h2.textContent = tier.charAt(0).toUpperCase() + tier.slice(1);
+        wall.appendChild(h2);
+
+        const group = donors.filter(d=>d.tier===tier);
+
+        if(tier==="silver"){
+          const wrap = document.createElement("div");
+          wrap.className = "middle-tier-wrap";
+          // left column
+          const left = document.createElement("div");
+          // right column
+          const right = document.createElement("div");
+
+          const half = Math.ceil(group.length/2);
+          group.slice(0,half).forEach(d=>left.appendChild(makePlaque(d)));
+          group.slice(half).forEach(d=>right.appendChild(makePlaque(d)));
+
+          wrap.appendChild(left);
+          // center logo
+          if(logoURL){
+            const img = document.createElement("img");
+            img.src = logoURL;
+            img.alt = "Logo";
+            img.style.width="300px";
+            img.style.height="300px";
+            img.style.flexShrink="0";
+            wrap.appendChild(img);
+          }
+          wrap.appendChild(right);
+          wall.appendChild(wrap);
+
+        } else {
+          const rows = distribute(group,tier);
+          rows.forEach(r=>{
+            const row = document.createElement("div");
+            row.className = "tier-row";
+            r.forEach(d=>row.appendChild(makePlaque(d)));
+            wall.appendChild(row);
+          });
+        }
+      });
+
+      // mobile-only bottom logo
+      if(logoURL){
+        const bottom = document.createElement("img");
+        bottom.src = logoURL;
+        bottom.alt = "Logo";
+        bottom.className = "mobile-logo";
+        wall.appendChild(bottom);
+      }
+    })();
+  </script>
 </body>
 </html>
