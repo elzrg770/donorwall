@@ -198,7 +198,19 @@
             wall.appendChild(rowEl);
           });
         }
-      });
+          // Render logo at the bottom (mobile only)
+  if (logoURL) {
+    const logo = document.createElement('img');
+    logo.src = logoURL;
+    logo.alt = 'Logo';
+    logo.className = 'mobile-logo';
+    logo.style.margin = '2rem auto 0 auto';
+    logo.style.display = 'block';
+    logo.style.width = '200px';
+    logo.style.height = 'auto';
+    wall.appendChild(logo);
+  }
+}
     }
 
     fetchDonors(CSV_FILE)
