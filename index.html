@@ -205,7 +205,21 @@
           });
         }
       });
+  // bottom logo on mobile only
+      if (logoURL) {
+        const bottom = document.createElement("img");
+        bottom.src = logoURL; bottom.alt="Logo";
+        bottom.className = "mobile-logo";
+        wall.appendChild(bottom);
+      }
+    }
 
+    fetchDonors(CSV_FILE)
+      .then(({donors,logoURL})=>render(donors,logoURL))
+      .catch(e=>{
+        document.getElementById("donor-wall").textContent="Error loading data.";
+        console.error(e);
+      });
     
   </script>
 </body>
