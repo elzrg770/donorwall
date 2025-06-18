@@ -41,6 +41,8 @@
 <script>
 // const CSV_FILE = "demo_donors.csv";
 const CSV_FILE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSgtQMdzrtymc-gPKeDZET-ynYo_DDCL-icYNJ7EGOWP-TjhRXiAUUhmvjvNN7P7_L9kjC4QbNcTd-f/pub?gid=0&single=true&output=csv";
+// fallback/default logo
+let logoURL = 'club.png';
 
 const TIERS = {
   top   : {min:5000, rows:[3,4,5,6,7]},
@@ -126,7 +128,7 @@ function render(donors) {
       });
 
       const img = document.createElement('img');
-      img.src  = 'club.png'; // your static logo
+      img.src  = img.src = logoURL; // your static logo
       img.alt  = 'Center Logo';
       img.style.width  = '300px';
       img.style.height = '300px';
