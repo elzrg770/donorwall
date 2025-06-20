@@ -6,48 +6,70 @@ h2 {
 }
 
 /* ---------- Responsive Styling ---------- */
-    @media (max-width: 980px) {
-        #donor-wall {
+
+@media (max-width: 1280px) {
+         .tier-row {
+           width: 100%;
+           max-width: 1280px;
+        }
+        }
+@media (max-width: 1120px) {
+         .middle-tier-wrap {
            display: block !important;
         }
+        }
+@media (max-width: 980px) {
+        /*  #donor-wall {*/
+        /*   display: block !important;*/
+        /*}*/
         .tier-row{
         padding:5px 10px !important;
         }
-        .middle-tier-wrap {
-           display: block !important;
+         .tier-row {
+     flex-wrap: wrap !important;
+     }
+    .plaque {
+     width: 160px !important;
+     height: 100px !important;
+     font-size: 20px !important;
+     text-align: center;
+     }
         }
-     .plaque span.amount{
-         font-size: 16px; 
-     }    
-    }
-    @media (max-width: 768px) {
-      #donor-wall {
-        gap: 16px;
-        padding: 0 1rem;
-      }
-    }
-
+/*@media (max-width: 768px) {*/
+/*    #donor-wall {*/
+/*      gap: 16px;*/
+/*      padding: 0 1rem;*/
+/*     }*/
+   
+/*    .tier-row {*/
+/*     flex-wrap: wrap !important;*/
+/*     }*/
+/*    .plaque {*/
+/*     width: 160px !important;*/
+/*     height: 84px !important;*/
+/*     font-size: 20px !important;*/
+/*     text-align: center;*/
+/*     }*/
+/*}*/
+        
 .plaque.bottom:hover {
     background: linear-gradient(#e3730e, #c48256);
     color: #fff;
+    cursor: pointer;
 }
 .plaque.middle:hover {
     background: linear-gradient(#979393, #b7bec7);
     color: #fff;
+    cursor: pointer;
 }
 .plaque.top:hover {
     background: linear-gradient(#c2a60c, #e2aa05);
     color: #fff;
+    cursor: pointer;
 }
-.plaque .amount {
-  display: none;
+.tier-row:empty {
+    display: none !important;
 }
-/* Hide the tier headings */
-#donor-wall h2 {
-  display: none !important;
+.tier-row{
+    min-width:270px;
 }
-
-
-
-
-
